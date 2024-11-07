@@ -1,182 +1,170 @@
+#include <iostream>
 #include <initializer_list>
 using namespace std;
 
 template <typename T>
-class List{
+class List {
 public:
-        friend ostream& operator<<(ostream& os, const List<T>& list) {
-            typename List<T>::Node<T>* curr = list.head;
-            while (curr != nullptr) {
-                os << "[" << curr->data << "]";
-                if (curr->pNext != nullptr) {
-                    os << "->";
-                }
-                curr = curr->pNext;
+    friend ostream& operator<<(ostream& os, const List<T>& list) {
+        typename List<T>::Node<T>* curr = list.head;
+        while (curr != nullptr) {
+            os << "[" << curr->data << "]";
+            if (curr->pNext != nullptr) {
+                os << "->";
             }
-            os << "->nullptr" << endl;
-            return os;
+            curr = curr->pNext;
         }
+        os << "->nullptr" << endl;
+        return os;
+    }
+
+    List();        
+    List(initializer_list<T> initList);
+    ~List();
 
 
-        List();
-        List(initializer_list<T> initList);
-        ~List();
+    void push_back(T data);
+    void push_front(T data);
+    void insert(T data, int index);
+    void remove(int index);
+    void pop_front();
+    void pop_back();
+    void clear();
 
-        void push_back(T data);
+    T& operator[](const int idx);
+    int size() const { return size_; }
 
-        int getSize(){return size;}
-
-        T& operator[](const int idx);
-
-        void pop_front();
-
-        void clear();
-
-        void push_front(T data);
-
-        void insert(T data, int index);
-
-        void remove(int index);
-
-        void pop_back();
 private:
     template<typename T1>
-    class Node{
-
+    class Node {
     public:
-        Node *pNext;
+        Node* pNext;
         T data;
-        Node(T1 data=T1(), Node* pNext=nullptr){
-
-            this->data = data;
-            this->pNext = pNext;
-        }
+        Node(T1 data = T1(), Node* pNext = nullptr) : data(data), pNext(pNext) {}
     };
 
-    int size;
-    Node<T> *head;
+    int size_; 
+    Node<T>* head; 
 };
 
-template <typename T>
-List<T>::List(){
-    size = 0;
-    head = nullptr;
-}
 
 template <typename T>
-List<T>::List(initializer_list<T> initList){
-    size = 0;
-    head = nullptr;
-    for (const T& val : initList){
+List<T>::List() : size_(0), head(nullptr) {}
+
+template <typename T>
+List<T>::List(initializer_list<T> initList) : size_(0), head(nullptr) {
+    for (const T& val : initList) {
         push_back(val);
     }
 }
 
+
 template <typename T>
-List<T>::~List(){
+List<T>::~List() {
     clear();
 }
 
 template <typename T>
-void List<T>::push_back(T data){
-    if(head == nullptr){
-        head = new Node<T>(data);
-    }else{
-        Node<T> *curr = this->head;
-        while (curr-> pNext != nullptr)
-        {
+void List<T>::push_back(T data) {
+    Node<T>* newNode = new Node<T>(data);
+
+    if (head == nullptr) {
+        head = newNode;
+    } else {
+        Node<T>* curr = head;
+        while (curr->pNext != nullptr) {
             curr = curr->pNext;
         }
-        curr->pNext = new Node<T>(data);
+        curr->pNext = newNode; 
     }
-
-    size++;
+    size_++;
 }
 
 template <typename T>
-T &List<T>::operator[](const int idx)
-{
-    int counter = 0;
-    Node<T> *curr = this->head;
-
-    while (curr != nullptr){
-        if(counter == idx){
-            return curr->data;
-        }
-
-        curr = curr->pNext;
-        counter++;
-    }
-}
-
-template <typename T>
-void List<T>::pop_front(){
-    Node<T> *curr = this->head;
-
-    head = head->pNext;
-
-    delete curr;
-
-    size--;
-}
-
-template <typename T>
-void List<T>::clear()
-
-{;
-    Node<T> *curr = this->head;
-    while (curr != nullptr){
-        Node<T> *curr = head;
-        if(head != nullptr){
-            head= head->pNext;
-            delete curr;
-            size--;
-        }else{
-            break;
-        }
-    }
-}
-
-template <typename T>
-void List<T>::push_front(T data){
+void List<T>::push_front(T data) {
     head = new Node<T>(data, head);
-    size++;
+    size_++;
 }
 
 template <typename T>
-void List<T>::insert(T data, int index){
-    if(index == 0) push_front(data);
-    Node<T> *prev = this->head;
-
-    for(int i{0}; i < (index - 1); i++){
-        prev = prev->pNext;
+void List<T>::insert(T data, int index) {
+    if (index == 0) {
+        push_front(data);
+        return;
     }
-    Node<T> *nNode = new Node(data, prev->pNext);
-    prev->pNext = nNode;
-    size++;
-}
 
-template <typename T>
-void List<T>::remove(int index){
-    if(index == 0) pop_front();
+    if (index < 0 || index >= size_) {
+        throw out_of_range("Index out of range");
+    }
 
-    Node<T> *prev = this-> head;
-
-    for(int i{}; i < index - 1; ++i){
+    Node<T>* prev = head;
+    for (int i = 0; i < index - 1; ++i) {
         prev = prev->pNext;
     }
 
-    Node<T> *to_delete = prev->pNext;
+    Node<T>* newNode = new Node<T>(data, prev->pNext);
+    prev->pNext = newNode;
+    size_++;
+}
 
-    prev->pNext = to_delete->pNext;
 
-    delete to_delete;
-    
-    size--;
+template <typename T>
+void List<T>::remove(int index) {
+    if (index == 0) {
+        pop_front();  
+        return;
+    }
+
+    if (index < 0 || index >= size_) {
+        throw out_of_range("Index out of range");
+    }
+
+    Node<T>* prev = head;
+    for (int i = 0; i < index - 1; ++i) {
+        prev = prev->pNext; 
+    }
+
+    Node<T>* toDelete = prev->pNext;  
+    prev->pNext = toDelete->pNext;  
+    delete toDelete;  
+    size_--;
+}
+
+
+template <typename T>
+void List<T>::pop_front() {
+    if (head == nullptr) return;  
+
+    Node<T>* toDelete = head;
+    head = head->pNext; 
+    delete toDelete; 
+    size_--;
 }
 
 template <typename T>
-void List<T>::pop_back()
-{
-    remove(size-1);
+void List<T>::pop_back() {
+    if (head == nullptr) return;
+    remove(size_ - 1); 
 }
+
+template <typename T>
+void List<T>::clear() {
+    while (head != nullptr) {
+        pop_front(); 
+    }
+}
+
+
+template <typename T>
+T& List<T>::operator[](const int idx) {
+    if (idx < 0 || idx >= size_) {
+        throw out_of_range("Index out of range");
+    }
+
+    Node<T>* curr = head;
+    for (int i = 0; i < idx; ++i) {
+        curr = curr->pNext;
+    }
+    return curr->data;
+}
+
