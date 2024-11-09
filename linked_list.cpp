@@ -40,6 +40,7 @@ public:
     T& operator[](const int index);
     T get(int index) const;
     void set(T data, int index);
+    int get_size();
 
     bool operator==(const LinkedList<T>& other) const;
     bool operator!=(const LinkedList<T>& other) const;
@@ -219,6 +220,12 @@ void LinkedList<T>::set(T data, int index) {
         }
         curr->data = data;
     }
+}
+
+template <typename T>
+int LinkedList<T>::get_size()
+{
+    return size;
 }
 
 template <typename T>
