@@ -239,26 +239,3 @@ template <typename T>
 bool LinkedList<T>::operator!=(const LinkedList<T>& other) const {
     return !(*this == other);
 }
-
-int main() {
-    LinkedList<int> lst;
-    lst.push_front(1);
-    lst.push_back(2);
-    lst.push_back(3);
-    lst.push_back(4);
-
-    lst.insert(5, 2);
-    lst.set(4, 2);
-
-    cout << "List: " << lst;
-
-    LinkedList<int> lst2 = lst;
-    lst2.push_front(1);
-    cout << "List2 (copy of List): " << lst2;
-
-    cout << "Are the no lists equal? " << (lst != lst2 ? "Yes" : "No") << endl;
-
-    lst.clear();
-
-    return 0;
-}
