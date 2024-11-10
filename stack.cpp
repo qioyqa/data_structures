@@ -30,6 +30,7 @@ public:
         return os;
     }
 
+    int get_size();
     void push(T data);
     T pop();
     T top();
@@ -56,7 +57,14 @@ stack<T>::~stack(){
 }
 
 template <typename T>
-void stack<T>::push(T data){
+int stack<T>::get_size()
+{
+    return size;
+}
+
+template <typename T>
+void stack<T>::push(T data)
+{
     Node<T> *nNode = new Node<T>(data);
     if(!head){
         head = nNode;
