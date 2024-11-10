@@ -10,7 +10,7 @@ struct Node{
 
 template <typename T>
 class stack{
-private:
+public:
     Node<T>* head;
     int size;
 public:
@@ -32,7 +32,10 @@ public:
 
     void push(T data);
     T pop();
+    T top();
     void clear();
+    bool empty();
+    
 };
 
 template <typename T>
@@ -80,6 +83,11 @@ T stack<T>::pop(){
 }
 
 template <typename T>
+T stack<T>::top(){
+    return head->data;
+}
+
+template <typename T>
 void stack<T>::clear(){
     if(!head){
         return;
@@ -91,4 +99,9 @@ void stack<T>::clear(){
         }
     }
     size = 0;
+}
+
+template <typename T>
+bool stack<T>::empty(){
+    return (size == 0) ? true : false;
 }
